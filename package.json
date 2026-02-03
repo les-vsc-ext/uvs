@@ -1,6 +1,6 @@
 {
   "name": "uvs",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "displayName": "uv auto sync",
   "description": "Automatically run `uv sync` for Python projects that use uv (pyproject.toml detection).",
   "icon": "images/icon.png",
@@ -10,10 +10,10 @@
     "url": "https://github.com/les-vsc-ext/uvs"
   },
   "engines": {
-    "vscode": "^1.75.0"
+    "vscode": "^1.80.0"
   },
   "categories": [
-    "Other"
+    "Programming Languages"
   ],
   "activationEvents": [
     "workspaceContains:pyproject.toml",
@@ -60,6 +60,6 @@
   "devDependencies": {
     "typescript": "^5.9.3",
     "@types/node": "^24.10.0",
-    "@types/vscode": "^1.75.0"
+    "@types/vscode": "^1.80.0"
   }
 }

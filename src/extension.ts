@@ -7,7 +7,7 @@ const execAsync = promisify(exec);
 // Create output channel for displaying command output
 let outputChannel: vscode.OutputChannel;
 
-async function fileExists(uri: vscode.Uri): Promise<boolean> {
+async function fsExists(uri: vscode.Uri): Promise<boolean> {
     try {
         await vscode.workspace.fs.stat(uri);
         return true;
@@ -21,8 +21,11 @@ async function detectMinPythonVersion(folderUri: vscode.Uri | undefined): Promis
         return null;
     }
 
-    const pyverUri = vscode.Uri.joinPath(folderUri, '.python-version');
-    if (await fileExists(pyverUri)) {
+    if (await fsExists(vscode.Uri.joinPath(folderUri, '.venv'))) {
+        return null;
+    }
+
+    if (await fsExists(vscode.Uri.joinPath(folderUri, '.python-version'))) {
         return null;
     }
 
@@ -47,13 +50,8 @@ async function detectMinPythonVersion(folderUri: vscode.Uri | undefined): Promis
     // Determine minimal version from the spec string.
     // Only accept a '>=' style minimum (e.g., '>=3.8' or '>=3.8,<4').
     // Do NOT coerce a bare major version like '3' into '3.0'.
-    let minVersion: string | null = null;
-    const geMatch = spec.match(/>=\s*([0-9]+(?:\.[0-9]+){0,2})/);
-    if (geMatch) {
-        minVersion = geMatch[1];
-    }
-
-    return minVersion;
+    const matched = spec.match(/>=\s*([0-9]+(?:\.[0-9]+){0,2})/);
+    return matched ? matched[1] : null;
 }
 
 function getConfig() {
@@ -157,7 +155,7 @@ export function activate(context: vscode.ExtensionContext) {
                 for (const folder of folders) {
                     const uri = vscode.Uri.joinPath(folder.uri, 'pyproject.toml');
                     const lockUri = vscode.Uri.joinPath(folder.uri, 'uv.lock');
-                    if (await fileExists(uri) && await fileExists(lockUri)) {
+                    if (await fsExists(uri) && await fsExists(lockUri)) {
                         found = true;
                         foundFolderUri = folder.uri;
                         break;
